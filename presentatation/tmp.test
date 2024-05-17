@@ -1,0 +1,507 @@
+Это файл styles11.sty % Пакеты
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,russian]{babel}
+
+\usepackage{graphicx}
+\usepackage{svg}
+
+\usepackage{caption}
+\captionsetup[figure]{
+  labelformat=empty,
+  position=below,
+  justification=centering,
+}
+
+\makeatletter
+\def\fps@figure{H} % Всегда [H]
+\g@addto@macro\@floatboxreset\centering % Всегда по центру
+\makeatother
+
+\usepackage{subfig}
+\captionsetup[subfloat]{
+  labelformat=empty,
+  position=below,
+  justification=centering,
+}
+
+% Тема и ее настройки
+\usetheme{Berlin}
+\setbeamertemplate{headline}[default]
+\setbeamertemplate{page number in head/foot}{}
+
+% Номер слайда вместе с заголовком
+\setbeamerfont{frametitle}{series=\bfseries}
+\setbeamerfont{framesubtitle}{series=\mdseries}
+\setbeamerfont{pagenumber}{parent={frametitle}, series=\bfseries}
+\makeatletter
+\defbeamertemplate*{frametitle}{titlewithnumber}[1][left]
+{%
+  \ifbeamercolorempty[bg]{frametitle}{}{\nointerlineskip}%
+  \@tempdima=\textwidth%
+  \advance\@tempdima by\beamer@leftmargin%
+  \advance\@tempdima by\beamer@rightmargin%
+  \begin{beamercolorbox}[sep=0.3cm,#1,wd=\the\@tempdima]{frametitle}
+    \usebeamerfont{frametitle}%
+    \vbox{}\vskip-1ex%
+    \if@tempswa\else\csname beamer@fte#1\endcsname\fi%
+    \strut\insertframetitle\hspace{0pt plus 1 filll}\usebeamerfont{pagenumber}\insertpagenumber\strut\par%
+    {%
+      \ifx\insertframesubtitle\@empty%
+      \else%
+      {\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\strut\insertframesubtitle\strut\par}%
+      \fi
+    }%
+    \vskip-1ex%
+    \if@tempswa\else\vskip-.3cm\fi% set inside beamercolorbox... evil here...
+  \end{beamercolorbox}%
+}
+\makeatother
+\setbeamertemplate{frametitle}[titlewithnumber]
+
+% Настройки титульной страницы
+\defbeamertemplate*{title page}{customized}[1][]
+{
+  \vbox{}
+  \vfill
+  \begingroup
+    \centering
+    % institute
+    \begin{beamercolorbox}[sep=8pt,center,#1]{institute}
+      \usebeamerfont{institute}\insertinstitute
+    \end{beamercolorbox}
+    \vskip1em
+    % title
+    \begin{beamercolorbox}[sep=8pt,center,#1]{title}
+      \usebeamerfont{title}\inserttitle\par%
+      \ifx\insertsubtitle\@empty%
+      \else%
+        \vskip0.25em%
+        {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
+      \fi%
+    \end{beamercolorbox}
+    \vskip1em\par
+    % author
+    \begin{beamercolorbox}[sep=8pt,center,#1]{author}
+      \begin{tabular}{l}
+        \usebeamerfont{author}\insertauthor % Авторы выровнены по центру и по левому краю
+      \end{tabular}
+    \end{beamercolorbox}
+    % date
+    \begin{beamercolorbox}[sep=8pt,center,#1]{date}
+      \usebeamerfont{date}\insertdate
+    \end{beamercolorbox}
+  \endgroup
+  \vfill
+}
+
+\setbeamerfont{title}{series=\bfseries, size=\LARGE}
+\setbeamerfont{subtitle}{series=\mdseries}
+\setbeamerfont{institute}{size=\small}
+\setbeamerfont{date}{size=\small}  
+
+Это файл titlepage.tex \title{Горизонтальное масштабирование PostgreSQL для улучшения производительности при работе с крупными таблицами в условиях существующей схемы базы данных.}
+
+\subtitle{Выпускная квалификационная работа бакалавра}
+
+\pdfstringdefDisableCommands{
+  \def\\{}
+  \def\,{}
+  \def\textbf#1{<#1>}
+}
+
+\author[Куценко Борис Дмитриевич]
+{
+  \textbf{Студент группы М8О-407Б-20:} Куценко Борис Дмитриевич\\
+  \ \textbf{Научный руководитель:} ст. преподаватель кафедры 806\\\ Миронов Евгений Сергеевич
+  % Обратите внимание на пробел в начале строки
+}
+
+\institute[Московский авиационный институт]
+{
+  Московский авиационный институт (национальный исследовательский университет)\\
+  Институт № 8 «Компьютерные науки и прикладная математика»\\
+  Кафедра № 806 «Вычислительная математика и программирование» 
+}
+
+\date{Москва --- \the\year}
+
+\logo{\includegraphics[height=1cm]{img/mai.eps}} 
+Это файл slides.tex 
+\documentclass[pdf, hyperref={unicode}, aspectratio=169]{beamer}
+
+\usepackage{./styles11}
+
+% Включаю кнопочки
+\setbeamertemplate{navigation symbols}[default]
+
+% Название темы слишком длинное, поменьше шрифт!
+\setbeamerfont{title}{series=\bfseries, size=\Large}
+
+% \useoutertheme{miniframes}
+
+\graphicspath{ {/img/} }
+
+\input{titlepage}
+
+\begin{document}
+
+\epstopdfsetup{outdir=./}
+
+{
+	% убирает номер слайда с титульного слайда
+	\setbeamertemplate{page number in head/foot}{}
+	\frame{\titlepage}
+}
+
+\section{Актуальность темы}
+\begin{frame}
+	\frametitle{Актуальность темы}
+	\begin{itemize}
+		\item Газотурбинное оборудование широко используется на электростанциях.\\Сбои и поломки турбин приводят к перебоям в электросети.
+		\item Предсказание аварий позволяет заблаговременно ремонтировать оборудование, тем самым сокращая ресурсы на устранение последствий.
+		\item Цифровой двойник электростанции используется для аналитики, предсказания сбоев и заблаговременного проведения обслуживания.
+	\end{itemize}
+\end{frame}
+
+
+\section{Цель и задачи работы}
+\begin{frame}
+	\frametitle{Цель и задачи работы}
+	
+	\textbf{Цель} --- разработать модуль, обеспечивающий управление структурой хранения временных рядов и данными сенсоров для системы мониторинга цифрового двойника промышленных электростанций, использующих газотурбинное оборудование.
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Цель и задачи работы}
+	
+	\textbf{Задачи:}
+	\begin{enumerate}
+		\fontsize{10pt}{12pt}\selectfont
+		\item Спроектировать модель данных дерева организационной структуры предприятия.
+		\item Описать способы взаимодействия: добавление, удаление и изменение вершин и рёбер дерева.
+		\item Спроектировать модель хранения временных рядов датчиков.
+		\item Изучить средства и технологии, которые будут применятся в ходе разработки программного продукта.
+		\item Реализовать модуль управления графом организационной структурой и данными.
+		\item Разработать алгоритм объединения данных датчиков с разными частотами дискретизации.
+		\item Реализовать генерацию данных для таблиц датчиков, алгоритм получения наборов временных рядов.
+		\item Произвести тест производительности реализованного модуля.
+	\end{enumerate}
+\end{frame}
+
+
+\section{Постановка задачи}
+\begin{frame}
+	\frametitle{Постановка задачи}
+	
+	Необходимо предусмотреть следующие особенности:
+	
+	\begin{itemize}
+		\item Возможность управлять деревом организационной структуры, набором датчиков и их характеристиками.
+		\item Предусмотреть интерфейс получения данных с датчиков для последующего мониторинга и аналитики.
+		\item Датчики могут иметь разные частоты дискретизации, нужно интерполировать значения по последним известным на данный момент.
+		\item Временные ряды должны хранится в ClickHouse, а справочники в PostgreSQL.
+	\end{itemize}
+\end{frame}
+
+
+\section{Стек технологий}
+\begin{frame}
+	\frametitle{Стек технологий}
+	
+	\begin{itemize}
+		\item \textbf{Python} является основным языком программирования, который использовался при решении задач;
+		\item \textbf{FastAPI} реализует веб-интерфейс для взаимодействия с модулем и базами данных, \textbf{SwaggerUI} визуализирует веб-интерфейс;
+		\item \textbf{SQLAlchemy} позволяет работать с базами данных на основе объектно-ориентированного подхода;
+		\item \textbf{PostgreSQL} обеспечивает хранение дерева организационной структуры предприятия и информации о датчиках;
+		\item \textbf{ClickHouse} хранит большие объёмы данных, получаемые от сенсоров;
+		\item \textbf{Docker} позволяет разворачивать и переносить изолированные контейнеры с базами данных;
+		\item \textbf{GraphViz} визуализирует дерево организационной структуры.
+	\end{itemize}
+\end{frame}
+
+
+\section{Архитектура решения, алгоритм решения задачи}
+\begin{frame}
+	\frametitle{Архитектура решения, алгоритм решения задачи}
+	
+	Модель графа организационный структуры:
+	
+	\begin{center}
+		% \includegraphics[height = 6cm]{pg.drawio.eps}
+	\end{center}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Архитектура решения, алгоритм решения задачи}
+	
+	Основные способы управления временными рядами и деревом орг. структуры
+	
+	\begin{center}
+		% \includegraphics[height = 5cm]{usecases_hard.eps}
+	\end{center}
+\end{frame}
+
+
+\section{Результаты разработки}
+\begin{frame}
+	\frametitle{Результаты разработки}
+	
+	Для демонстрации программного продукта используется OpenAPI SwaggerUI
+	
+	\begin{center}
+		% \includegraphics[height = 6cm]{swagger1.png}
+	\end{center}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Результаты разработки}
+	
+	Справочная информация в SwaggerUI
+	
+	\begin{center}
+		% \includegraphics[height = 6cm]{swagger2.png}
+	\end{center}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Результаты разработки}
+	
+	Визуализация дерева организационной структуры
+	
+	\begin{center}
+		% \includegraphics[height = 6cm]{demo_del8.eps}
+	\end{center}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Результаты разработки}
+	
+	Получение набора временных рядов с датчиков $1$, $2$, $5$
+	
+	\begin{center}
+		% \includegraphics[height = 6cm]{swagger8.png}
+	\end{center}
+\end{frame}
+
+
+\section{Способы хранения временных рядов}
+\begin{frame}
+	\frametitle{Способы хранения временных рядов}
+	
+	\begin{itemize}
+		\item \texttt{multi} --- каждому датчику соответствует отдельная таблица в ClickHouse.
+		\item \texttt{single} --- единая таблица для всех датчиков, в которой предварительно выполнена интерполяция данных.
+	\end{itemize}
+	
+	Необходимо сравнить способы и выбрать более эффективный с точки зрения вычислительных ресурсов.
+\end{frame}
+
+
+\section{Тесты производительности}
+\begin{frame}
+	\frametitle{Тесты производительности}
+	
+	Графики времени обработки запроса для диапазонов до $20000$ секунд
+	
+	\begin{center}
+		% \includegraphics[height = 6cm]{bench2e4.png}
+	\end{center}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Тесты производительности}
+	
+	Графики времени обработки запросов для больших диапазонов
+	
+	\begin{center}
+		% \includegraphics[height = 6cm]{bench2e5.png}
+	\end{center}
+\end{frame}
+
+
+\section{Описание программной разработки}
+\begin{frame}
+	\frametitle{Описание программной разработки}
+	
+	QR-код со ссылкой на GitHub репозиторий с исходным кодом
+	
+	\begin{center}
+		% \includegraphics[height = 6cm]{qr-git.eps}
+	\end{center}
+\end{frame}
+
+
+\section{Оценка результата}
+\begin{frame}
+	\frametitle{Оценка результата}
+	
+	\begin{itemize}
+		\item В результате выполнения ВКР был разработан модуль управления временными рядами сигналов сложных технических систем на языке Python с использованием СУБД PostgreSQL и ClickHouse.
+		\item Модуль автоматизирует сбор информации с сенсоров системы, тем самым упрощая создание цифрового двойника электростанции.
+		\item Данные с датчиков надёжно хранятся в базе данных и будут использованы для моделирования объекта и предиктивной аналитики.
+		\item Можно будет оптимизировать работу оборудования, замедляя темпы его износа, повысить отказоустойчивость как отдельной электростанции, так и всей электросети в целом.
+	\end{itemize}
+\end{frame}
+
+\end{document} Где тут прибавляется строка снизу каждого файла с title и author
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//allo
+
+Это файл styles11.sty % Пакеты
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english,russian]{babel}
+
+\usepackage{graphicx}
+\usepackage{svg}
+
+\usepackage{caption}
+\captionsetup[figure]{
+  labelformat=empty,
+  position=below,
+  justification=centering,
+}
+
+\makeatletter
+\def\fps@figure{H} % Всегда [H]
+\g@addto@macro\@floatboxreset\centering % Всегда по центру
+\makeatother
+
+\usepackage{subfig}
+\captionsetup[subfloat]{
+  labelformat=empty,
+  position=below,
+  justification=centering,
+}
+
+% Тема и ее настройки
+\usetheme{Berlin}
+\setbeamertemplate{headline}[default]
+\setbeamertemplate{page number in head/foot}{}
+
+% Номер слайда вместе с заголовком
+\setbeamerfont{frametitle}{series=\bfseries}
+\setbeamerfont{framesubtitle}{series=\mdseries}
+\setbeamerfont{pagenumber}{parent={frametitle}, series=\bfseries}
+\makeatletter
+\defbeamertemplate*{frametitle}{titlewithnumber}[1][left]
+{%
+  \ifbeamercolorempty[bg]{frametitle}{}{\nointerlineskip}%
+  \@tempdima=\textwidth%
+  \advance\@tempdima by\beamer@leftmargin%
+  \advance\@tempdima by\beamer@rightmargin%
+  \begin{beamercolorbox}[sep=0.3cm,#1,wd=\the\@tempdima]{frametitle}
+    \usebeamerfont{frametitle}%
+    \vbox{}\vskip-1ex%
+    \if@tempswa\else\csname beamer@fte#1\endcsname\fi%
+    \strut\insertframetitle\hspace{0pt plus 1 filll}\usebeamerfont{pagenumber}\insertpagenumber\strut\par%
+    {%
+      \ifx\insertframesubtitle\@empty%
+      \else%
+      {\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\strut\insertframesubtitle\strut\par}%
+      \fi
+    }%
+    \vskip-1ex%
+    \if@tempswa\else\vskip-.3cm\fi% set inside beamercolorbox... evil here...
+  \end{beamercolorbox}%
+}
+\makeatother
+\setbeamertemplate{frametitle}[titlewithnumber]
+
+% Настройки титульной страницы
+\defbeamertemplate*{title page}{customized}[1][]
+{
+  \vbox{}
+  \vfill
+  \begingroup
+    \centering
+    % institute
+    \begin{beamercolorbox}[sep=8pt,center,#1]{institute}
+      \usebeamerfont{institute}\insertinstitute
+    \end{beamercolorbox}
+    \vskip1em
+    % title
+    \begin{beamercolorbox}[sep=8pt,center,#1]{title}
+      \usebeamerfont{title}\inserttitle\par%
+      \ifx\insertsubtitle\@empty%
+      \else%
+        \vskip0.25em%
+        {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
+      \fi%
+    \end{beamercolorbox}
+    \vskip1em\par
+    % author
+    \begin{beamercolorbox}[sep=8pt,center,#1]{author}
+      \begin{tabular}{l}
+        \usebeamerfont{author}\insertauthor % Авторы выровнены по центру и по левому краю
+      \end{tabular}
+    \end{beamercolorbox}
+    % date
+    \begin{beamercolorbox}[sep=8pt,center,#1]{date}
+      \usebeamerfont{date}\insertdate
+    \end{beamercolorbox}
+  \endgroup
+  \vfill
+}
+
+\setbeamerfont{title}{series=\bfseries, size=\LARGE}
+\setbeamerfont{subtitle}{series=\mdseries}
+\setbeamerfont{institute}{size=\small}
+\setbeamerfont{date}{size=\small}  
+
+Это файл titlepage.tex \title{Горизонтальное масштабирование PostgreSQL для улучшения производительности при работе с крупными таблицами в условиях существующей схемы базы данных.}
+
+\subtitle{Выпускная квалификационная работа бакалавра}
+
+\pdfstringdefDisableCommands{
+  \def\\{}
+  \def\,{}
+  \def\textbf#1{<#1>}
+}
+
+\author[Куценко Борис Дмитриевич]
+{
+  \textbf{Студент группы М8О-407Б-20:} Куценко Борис Дмитриевич\\
+  \ \textbf{Научный руководитель:} ст. преподаватель кафедры 806\\\ Миронов Евгений Сергеевич
+  % Обратите внимание на пробел в начале строки
+}
+
+\institute[Московский авиационный институт]
+{
+  Московский авиационный институт (национальный исследовательский университет)\\
+  Институт № 8 «Компьютерные науки и прикладная математика»\\
+  Кафедра № 806 «Вычислительная математика и программирование» 
+}
+
+\date{Москва --- \the\year}
+
+\logo{\includegraphics[height=1cm]{img/mai.eps}} 
+Это файл slides.tex 
+
+ Где тут прибавляется строка снизу каждого файла с title и author
