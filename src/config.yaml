@@ -1,0 +1,35 @@
+databases:
+  -
+    host: localhost
+    database: shard1
+    user: shard1
+    password: shard1
+    port: 5434
+
+  -
+    host: localhost
+    database: shard2
+    user: shard2
+    password: shard2
+    port: 5435
+
+  -
+    host: localhost
+    database: shard3
+    user: shard3
+    password: shard3
+    port: 5436
+
+  # -
+  #   host: localhost
+  #   database: shard5
+  #   user: shard5
+  #   password: shard5
+  #   port: 5438
+
+system_db:
+  host: localhost
+  database: postgres
+  user: postgres
+  password: postgres
+  port: 5433

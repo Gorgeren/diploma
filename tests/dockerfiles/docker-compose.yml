@@ -1,0 +1,60 @@
+version: "3.9"
+
+services:
+  shard1:
+    restart: always
+    image: postgres:15.2
+    environment:
+      POSTGRES_USER: shard1
+      POSTGRES_PASSWORD: shard1
+      POSTGRES_DB: shard1
+    ports:
+      - 5434:5432
+    volumes:
+      - shard1_data:/var/lib/postgresql/data
+    container_name: shard1
+    
+  shard2:
+    restart: always
+    image: postgres:15.2
+    environment:
+      POSTGRES_USER: shard2
+      POSTGRES_PASSWORD: shard2
+      POSTGRES_DB: shard2
+    ports:
+      - 5435:5432
+    volumes:
+      - shard2_data:/var/lib/postgresql/data
+    container_name: shard2
+
+  shard3:
+    restart: always
+    image: postgres:15.2
+    environment:
+      POSTGRES_USER: shard3
+      POSTGRES_PASSWORD: shard3
+      POSTGRES_DB: shard3
+    ports:
+      - 5436:5432
+    volumes:
+      - shard3_data:/var/lib/postgresql/data
+    container_name: shard3
+
+  db:
+    restart: always
+    image: postgres:15.2
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - 5433:5432
+    container_name: db
+
+volumes:
+  shard1_data: null
+  shard2_data: null
+  shard3_data: null
+  pgdata: null

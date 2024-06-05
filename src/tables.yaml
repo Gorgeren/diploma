@@ -1,0 +1,41 @@
+tables:
+  users:
+    table_name: users
+    columns:
+      id: BIGSERIAL PRIMARY KEY
+      first_name: serial
+      middle_name: text NOT NULL
+      last_name: text NOT NULL
+      sex: CHAR(1) NOT NULL
+      balance: DECIMAL(11, 2) NOT NULL
+    shard_key: id
+    sql: |
+      CREATE TABLE users (
+          id BIGSERIAL PRIMARY KEY,
+          first_name text NOT NULL,
+          middle_name text NOT NULL,
+          last_name text NOT NULL,
+          sex CHAR(1) NOT NULL,
+          balance DECIMAL(11, 2) NOT NULL
+      );
+      CREATE INDEX idx_first_name ON users (first_name);
+      CREATE INDEX idx_last_name ON users (last_name);
+      CREATE INDEX idx_balance ON users (balance);
+
+  transactions:
+    table_name: transactions
+    columns:
+      id: BIGSERIAL PRIMARY KEY
+      transaction_date: TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+      transaction_amount: DECIMAL(11, 2) NOT NULL
+      person_id: INT NOT NULL
+    shard_key: person_id
+    sql: |
+      CREATE TABLE transactions (
+          id BIGSERIAL PRIMARY KEY,
+          transaction_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          transaction_amount DECIMAL(11, 2) NOT NULL,
+          person_id INT NOT NULL,
+          FOREIGN KEY (person_id) REFERENCES users(id)
+      );
+      CREATE INDEX idx_transaction_date ON transactions (transaction_date);
